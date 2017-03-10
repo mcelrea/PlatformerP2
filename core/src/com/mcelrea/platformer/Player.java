@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Rectangle;
 public class Player {
     public static final float COLLISION_WIDTH=50;
     public static final float COLLISION_HEIGHT=70;
-    private static final float MAX_X_SPEED = 2;
-    private static final float MAX_Y_SPEED = 2;
+    private static final float MAX_X_SPEED = 5;
+    private static final float MAX_Y_SPEED = 5;
     private static final float MAX_JUMP_DISTANCE = 3 * COLLISION_HEIGHT;
     private Rectangle collisionRectangle;
     private float x;
@@ -68,6 +68,12 @@ public class Player {
         x += xSpeed;
         y += ySpeed;
         updateCollisionRectangle();
+    }
+
+    public void landed() {
+        blockJump = false;
+        jumpYDistance = 0;
+        ySpeed = 0;
     }
 
     public float getX() {
