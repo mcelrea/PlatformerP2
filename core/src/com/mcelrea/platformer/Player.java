@@ -2,6 +2,10 @@ package com.mcelrea.platformer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -18,13 +22,26 @@ public class Player {
     private float ySpeed;
     private boolean blockJump = false;
     private float jumpYDistance = 0;
+    private Animation walking;
+    private TextureRegion jumping;
+    private TextureRegion standing;
+    private TextureRegion ducking;
+    private float animationTimer = 0;
+    private boolean amDucking = false;
 
-    public Player(float x, float y) {
+    public Player(float x, float y, Texture t) {
         this.x = x;
         this.y = y;
         collisionRectangle = new Rectangle(x,y,
                 COLLISION_WIDTH,
                 COLLISION_HEIGHT);
+        TextureRegion[] regions = TextureRegion.split(t,(int)COLLISION_WIDTH,
+                (int)COLLISION_HEIGHT)[0];
+        walking = new Animation(0.25f,regions[1],regions[2]);
+        walking.setPlayMode(Animation.PlayMode.LOOP);
+        standing = regions[0];
+        ducking = regions[3];
+        jumping = regions[4];
     }
 
     public void updatePosition(float x, float y) {
@@ -37,7 +54,8 @@ public class Player {
         collisionRectangle.setPosition(x,y);
     }
 
-    public void update() {
+    public void update(float delta) {
+        animationTimer += delta;
         Input input = Gdx.input;
         //right
         if(input.isKeyPressed(Input.Keys.D)) {
@@ -50,6 +68,14 @@ public class Player {
         //no x-movement
         else {
             xSpeed = 0;
+        }
+
+        //duck
+        if(input.isKeyPressed(Input.Keys.S)) {
+            amDucking = true;
+        }
+        else {
+            amDucking = false;
         }
 
 
@@ -89,6 +115,30 @@ public class Player {
                 collisionRectangle.y,
                 collisionRectangle.width,
                 collisionRectangle.height);
+    }
+
+    public void draw(SpriteBatch batch) {
+        TextureRegion toDraw = standing;
+
+        if(xSpeed == 0 && amDucking) {
+            toDraw = ducking;
+        }
+
+        if(ySpeed != 0) {
+            toDraw = jumping;
+        }
+        else if(xSpeed > 0) {
+            toDraw = walking.getKeyFrame(animationTimer);
+            if(toDraw.isFlipX())
+                toDraw.flip(true, false);
+        }
+        else if(xSpeed < 0) {
+            toDraw = walking.getKeyFrame(animationTimer);
+            if(!toDraw.isFlipX())
+                toDraw.flip(true, false);
+        }
+
+        batch.draw(toDraw,x,y);
     }
 
     public Rectangle getCollisionRectangle() {

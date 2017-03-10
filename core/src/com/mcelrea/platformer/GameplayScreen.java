@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -55,7 +56,7 @@ public class GameplayScreen implements Screen {
         map1 = game.getAssetManager().get("map1.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map1,batch);
         mapRenderer.setView(camera);
-        player = new Player(200,200);
+        player = new Player(200,200,(Texture)game.getAssetManager().get("playerSpriteSheet.png"));
         font = new BitmapFont();
         //keep text at the same location on the screen
     }
@@ -66,10 +67,10 @@ public class GameplayScreen implements Screen {
 
         output = "";
         userInput();
-        player.update();
+        player.update(delta);
         handlePlayerCollision();
 
-        camera.position.set(player.getX(),player.getY(),0);
+        camera.position.set(player.getX(),WORLD_HEIGHT/2,0);
         camera.update();
 
         mapRenderer.setView(camera);
@@ -84,6 +85,7 @@ public class GameplayScreen implements Screen {
         Vector3 screenCoords = new Vector3(5,5,0);
         Vector3 worldCoords = camera.unproject(screenCoords);
         font.draw(batch,output, worldCoords.x,worldCoords.y);
+        player.draw(batch);
         batch.end();
 
         shapeRenderer.setProjectionMatrix(camera.projection);

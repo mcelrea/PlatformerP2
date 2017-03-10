@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -49,6 +50,7 @@ public class LoadingScreen implements Screen {
 
         //load all the assets (images, sounds, maps, etc.)
         game.getAssetManager().load("map1.tmx", TiledMap.class);
+        game.getAssetManager().load("playerSpriteSheet.png", Texture.class);
     }
 
     private void clearScreen() {
